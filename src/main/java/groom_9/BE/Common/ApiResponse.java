@@ -26,7 +26,7 @@ public class ApiResponse<T> {
     @JsonProperty("result")
     private T result;
 
-    // 성공한 경우 응답 생성
+    // 성공한 경우 응답 생성 (결과 데이터 없음)
     public static <T> ResponseEntity<ApiResponse<T>> onSuccess(String message, HttpStatus httpStatus) {
         return new ResponseEntity<>(new ApiResponse<>("OK:200", message, null), httpStatus);
 
@@ -37,8 +37,8 @@ public class ApiResponse<T> {
         return new ResponseEntity<>(new ApiResponse<>(String.valueOf(httpStatus.value()), HttpStatus.OK.getReasonPhrase(), result), httpStatus);
     }
 
-    // 실패한 경우 응답 생성, data는 없으면 Null
-    public static <T> ResponseEntity<ApiResponse<T>> onFailure(String message, HttpStatus httpStatus, T data) {
-        return new ResponseEntity<>(new ApiResponse<>(String.valueOf(httpStatus.value()), message, data), httpStatus);
+    // 실패한 경우 응답 생성 (결과 데이터 없음)
+    public static <T> ResponseEntity<ApiResponse<T>> onFailure(String message, HttpStatus httpStatus) {
+        return new ResponseEntity<>(new ApiResponse<>(String.valueOf(httpStatus.value()), message, null), httpStatus);
     }
 }
