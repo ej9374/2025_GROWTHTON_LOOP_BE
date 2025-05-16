@@ -1,6 +1,6 @@
 package groom_9.BE.Controller;
 
-import groom_9.Common.ApiResponse;
+import groom_9.BE.Common.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;

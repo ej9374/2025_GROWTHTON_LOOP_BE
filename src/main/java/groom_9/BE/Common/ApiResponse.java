@@ -1,4 +1,4 @@
-package groom_9.Common;
+package groom_9.BE.Common;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
