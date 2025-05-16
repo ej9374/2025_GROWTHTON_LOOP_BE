@@ -8,6 +8,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
+import java.security.Key;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -16,31 +17,30 @@ import java.util.List;
 @Setter
 @Document(collection = "users")
 public class User {
-
     @Id
     private ObjectId id;
 
     @Field("nickname")
     private String nickname;
 
-    @Field("oauthProvider")
-    private String oauthProvider;
+    @Field("kakaoId")
+    private String kakaoId;
 
-    @Field("oauthId")
-    private String oauthId;
-
-    @Field("onboardingKeyword")
-    private List<String> onboardingKeyword;
+    @Field("imageUrl")
+    private String imageUrl;
 
     @Field("points")
     private Integer points;
 
-    @Field("favoriteRoutines")
-    private List<ObjectId> favoriteRoutines;
+    @Field("routines")
+    private List<ObjectId> Routines;
 
-    @Field("createdAt")
-    private LocalDateTime createdAt;
+    @Field("keywords")
+    private List<ObjectId> keywords;
 
-    @Field("updatedAt")
-    private LocalDateTime updatedAt;
+    @Field("age")
+    private int age;
+
+    @Field("gender")
+    private Gender gender;
 }

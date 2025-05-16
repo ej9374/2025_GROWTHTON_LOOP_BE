@@ -5,31 +5,27 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.time.LocalDateTime;
+import java.util.List;
+
 import org.bson.types.ObjectId;
 
-@Document(collection = "routines")
+@Document(collection = "routine")
 public class Routine {
-
     @Id
     private ObjectId id;
 
-    @Field("name")
-    private String name;
+    @Field("content")
+    private List<String> content; //하루1바퀴, 등산하기
 
     @Field("userId")
     private ObjectId userId;
 
-    @Field("templateKeyword")
-    private String templateKeyword;
-
     @Field("createdAt")
     private LocalDateTime createdAt;
 
-    @Field("updatedAt")
-    private LocalDateTime updatedAt;
+    @Field("successAt")
+    private LocalDateTime successAt; //성공한 시간
 
-    @Field("isStopped")
-    private Boolean isStopped;
-
-    // 생성자, getter, setter 등
+    @Field("status")
+    private RoutineStatus status; //성공 여부
 }

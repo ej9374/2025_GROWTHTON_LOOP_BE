@@ -17,13 +17,17 @@ public class Controller {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<Object>> deleteRoutine(@PathVariable ObjectId id) {
-        if (true) {
-            return ApiResponse.onSuccess("루틴이 성공적으로 삭제되었습니다.", HttpStatus.OK);
+        if (false) {
+            return ApiResponse.onSuccess("루틴이 성공적으로 삭제되었습니다", HttpStatus.OK);
         } else {
-            return ApiResponse.onFailure("루틴을 찾을 수 없습니다.", HttpStatus.NOT_FOUND);
+            return ApiResponse.onFailure("루틴을 찾을 수 없습니다.", HttpStatus.NOT_FOUND, null);
         }
     }
 
+    @GetMapping("/fail")
+    public ResponseEntity<ApiResponse<Objects>> fail() {
+        return ApiResponse.onFailure("실패입니다.", HttpStatus.BAD_REQUEST, "실패사유 및 데이터 : 실패이유 혹은 데이터 삽입");
+    }
 
     @PostMapping("/hello")
     public ResponseEntity<ApiResponse<Objects>> createRoutine() {
