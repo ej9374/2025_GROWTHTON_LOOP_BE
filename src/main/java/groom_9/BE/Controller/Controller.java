@@ -20,7 +20,7 @@ public class Controller {
         if (true) {
             return ApiResponse.onSuccess("루틴이 성공적으로 삭제되었습니다.", HttpStatus.OK);
         } else {
-            return ApiResponse.onFailure("루틴을 찾을 수 없습니다.", HttpStatus.NOT_FOUND);
+            return ApiResponse.onFailure("루틴을 찾을 수 없습니다.", HttpStatus.NOT_FOUND, null);
         }
     }
 

@@ -23,19 +23,21 @@ public class ApiResponse<T> {
     @JsonProperty("message")
     private String message;
 
+    @JsonProperty("result")
+    private T result;
 
     // 성공한 경우 응답 생성
     public static <T> ResponseEntity<ApiResponse<T>> onSuccess(String message, HttpStatus httpStatus) {
-        return new ResponseEntity<>(new ApiResponse<>(String.valueOf(httpStatus.value()), message), httpStatus);
+        return new ResponseEntity<>(new ApiResponse<>(String.valueOf(httpStatus.value()), message, null), httpStatus);
     }
 
     // 성공한 경우 응답 생성 (결과 데이터 포함)
-    public static <T> ResponseEntity<ApiResponse<T>> onSuccess(HttpStatus httpStatus) {
-        return new ResponseEntity<>(new ApiResponse<>(String.valueOf(httpStatus.value()), HttpStatus.OK.getReasonPhrase()), httpStatus);
+    public static <T> ResponseEntity<ApiResponse<T>> onSuccess(HttpStatus httpStatus, T result) {
+        return new ResponseEntity<>(new ApiResponse<>(String.valueOf(httpStatus.value()), HttpStatus.OK.getReasonPhrase(), result), httpStatus);
     }
 
-    // 실패한 경우 응답 생성, 상태 코드 포함 가능
-    public static <T> ResponseEntity<ApiResponse<T>> onFailure(String message, HttpStatus httpStatus) {
-        return new ResponseEntity<>(new ApiResponse<>(String.valueOf(httpStatus.value()), message), httpStatus);
+    // 실패한 경우 응답 생성, data는 없으면 Null
+    public static <T> ResponseEntity<ApiResponse<T>> onFailure(String message, HttpStatus httpStatus, T data) {
+        return new ResponseEntity<>(new ApiResponse<>(String.valueOf(httpStatus.value()), message, data), httpStatus);
     }
 }
