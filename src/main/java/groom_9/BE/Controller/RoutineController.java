@@ -3,6 +3,7 @@ package groom_9.BE.Controller;
 
 import groom_9.BE.Common.ApiResponse;
 import groom_9.BE.DTO.RecordDto;
+import groom_9.BE.DTO.SuccessRecordDto;
 import groom_9.BE.Service.RoutineService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -10,6 +11,8 @@ import org.bson.types.ObjectId;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @Slf4j
@@ -31,6 +34,13 @@ public class RoutineController {
         else {
             return ApiResponse.onFailure("오류가 발생했습니다.", HttpStatus.BAD_REQUEST);
         }
+    }
+    @GetMapping("/calendar/{month}")
+    public ResponseEntity<ApiResponse<List<SuccessRecordDto>>> getCalendar(
+            @RequestHeader ObjectId userId, // 사용자 ID를 통해 해당 사용자의 기록만 조회하도록 구현할 수 있습니다.
+            @PathVariable int month) {
+        List<SuccessRecordDto> calendarData = routineService.calendar(month, userId);
+        return ApiResponse.onSuccess(month + "월 실천 내역", HttpStatus.OK, calendarData);
     }
 
 

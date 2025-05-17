@@ -1,6 +1,7 @@
 package groom_9.BE.Service;
 
 
+import groom_9.BE.DTO.SuccessRecordDto;
 import groom_9.BE.Domain.KeyWord;
 import groom_9.BE.Domain.Routine;
 import groom_9.BE.Domain.RoutineStatus;
@@ -13,9 +14,10 @@ import org.bson.types.ObjectId;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
+import java.time.Month;
+import java.util.*;
 
 @Service
 @Transactional
@@ -69,4 +71,41 @@ public class RoutineService {
         }
     }
 
+    public List<SuccessRecordDto> calendar(int thisMonth, ObjectId userId) {
+        Month month = Month.of(thisMonth);
+        int year = LocalDate.now().getYear();
+
+        LocalDateTime startOfMonth = LocalDate.of(year, month, 1).atStartOfDay();
+        LocalDateTime endOfMonth = startOfMonth.plusMonths(1).minusNanos(1);
+
+        // 해당 유저의 해당 월에 성공한 모든 루틴 조회
+        List<Routine> successRoutinesInMonth = routineRepository.findByUserIdAndStatusAndSuccessAtBetween(
+                userId, RoutineStatus.SUCCESS, startOfMonth, endOfMonth
+        );
+
+        for (Routine routine : successRoutinesInMonth) {
+            log.info(routine.getContent().toString());
+        }
+
+        // 날짜별로 루틴 그룹화
+        Map<LocalDate, List<String>> routinesByDate = new HashMap<>();
+        for (Routine routine : successRoutinesInMonth) {
+            if (routine.getSuccessAt() != null) {
+                LocalDate successDate = routine.getSuccessAt().toLocalDate();
+                String content = String.join(", ", routine.getContent());
+                routinesByDate.computeIfAbsent(successDate, k -> new ArrayList<>()).add(content);
+            }
+        }
+
+        // DTO 리스트로 변환
+        List<SuccessRecordDto> calendarData = new ArrayList<>();
+        for (Map.Entry<LocalDate, List<String>> entry : routinesByDate.entrySet()) {
+            SuccessRecordDto dto = new SuccessRecordDto();
+            dto.setDate(entry.getKey());
+            dto.setRoutineContents(entry.getValue());
+            calendarData.add(dto);
+        }
+
+        return calendarData;
+    }
 }
