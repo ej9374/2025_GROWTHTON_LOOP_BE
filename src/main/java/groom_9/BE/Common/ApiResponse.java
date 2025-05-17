@@ -34,7 +34,7 @@ public class ApiResponse<T> {
 
     // 성공한 경우 응답 생성 (결과 데이터 포함)
     public static <T> ResponseEntity<ApiResponse<T>> onSuccess(String message, HttpStatus httpStatus, T result) {
-        return new ResponseEntity<>(new ApiResponse<>(String.valueOf(httpStatus.value()), HttpStatus.OK.getReasonPhrase(), result), httpStatus);
+        return new ResponseEntity<>(new ApiResponse<>("OK:200", message, result), httpStatus);
     }
 
     // 실패한 경우 응답 생성 (결과 데이터 없음)

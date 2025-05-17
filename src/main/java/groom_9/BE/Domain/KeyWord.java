@@ -1,12 +1,13 @@
 package groom_9.BE.Domain;
 
+import lombok.Getter;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.List;
-
+@Getter
 @Document("keyword")
 public class KeyWord {
 
