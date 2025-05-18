@@ -2,6 +2,8 @@ package groom_9.BE.Controller;
 
 
 import groom_9.BE.Common.ApiResponse;
+import groom_9.BE.DTO.MonthlyReportDto;
+import groom_9.BE.DTO.QuestionDto;
 import groom_9.BE.DTO.RecordDto;
 import groom_9.BE.DTO.SuccessRecordDto;
 import groom_9.BE.Service.RoutineService;
@@ -43,5 +45,14 @@ public class RoutineController {
         return ApiResponse.onSuccess(month + "월 실천 내역", HttpStatus.OK, calendarData);
     }
 
+    @GetMapping("/report/{month}")
+    public ResponseEntity<ApiResponse<MonthlyReportDto>> getMonthlyReport(
+            @RequestHeader ObjectId userId,
+            @PathVariable int month,
+            @RequestBody QuestionDto questionDto
+            ) {
+        MonthlyReportDto reportData = routineService.getMonthlyReport(month, userId, questionDto.getReflectionQuestion(), questionDto.getAnswer());
+        return ApiResponse.onSuccess(month + "월 리포트", HttpStatus.OK, reportData);
+    }
 
 }

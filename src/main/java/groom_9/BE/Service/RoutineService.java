@@ -1,6 +1,7 @@
 package groom_9.BE.Service;
 
 
+import groom_9.BE.DTO.MonthlyReportDto;
 import groom_9.BE.DTO.SuccessRecordDto;
 import groom_9.BE.Domain.KeyWord;
 import groom_9.BE.Domain.Routine;
@@ -83,10 +84,6 @@ public class RoutineService {
                 userId, RoutineStatus.SUCCESS, startOfMonth, endOfMonth
         );
 
-        for (Routine routine : successRoutinesInMonth) {
-            log.info(routine.getContent().toString());
-        }
-
         // 날짜별로 루틴 그룹화
         Map<LocalDate, List<String>> routinesByDate = new HashMap<>();
         for (Routine routine : successRoutinesInMonth) {
@@ -108,4 +105,50 @@ public class RoutineService {
 
         return calendarData;
     }
+    public MonthlyReportDto getMonthlyReport(int thisMonth, ObjectId userId, String reflectionQuestion, String answer) {
+        Month month = Month.of(thisMonth);
+        int year = LocalDate.now().getYear();
+
+        LocalDateTime startOfMonth = LocalDate.of(year, month, 1).atStartOfDay();
+        LocalDateTime endOfMonth = startOfMonth.plusMonths(1).minusNanos(1);
+
+        // 해당 유저의 해당 월 전체 루틴 조회
+        List<Routine> allRoutinesInMonth = routineRepository.findByUserIdAndCreatedAtBetween(userId, startOfMonth, endOfMonth);
+
+        // 해당 유저의 해당 월 성공한 루틴 조회
+        List<Routine> successfulRoutinesInMonth = routineRepository.findByUserIdAndStatusAndSuccessAtBetween(userId, RoutineStatus.SUCCESS, startOfMonth, endOfMonth);
+
+        int totalRoutines = allRoutinesInMonth.size();
+        int totalSuccessCount = successfulRoutinesInMonth.size();
+        double averageSuccessRate = 0.0;
+
+        if (totalRoutines > 0) {
+            averageSuccessRate = (double) totalSuccessCount / totalRoutines * 100.0;
+        }
+
+        MonthlyReportDto reportDto = new MonthlyReportDto();
+        reportDto.setTotalRoutines(totalRoutines);
+        reportDto.setAverageSuccessRate(Math.round(averageSuccessRate * 100.0) / 100.0); // 소수점 둘째 자리까지 반올림
+        reportDto.setTotalSuccessCount(totalSuccessCount);
+        reportDto.setReflectionQuestion(reflectionQuestion);
+        reportDto.setAnswer(answer);
+
+        // 해당 userId를 가진 KeyWord 도큐먼트 찾기
+        Optional<KeyWord> existingKeyWord = keyWordRepository.findByUserId(userId).stream().findFirst();
+
+        if (existingKeyWord.isPresent()) {
+            // KeyWord 도큐먼트가 존재하면 질문과 답변 업데이트
+            KeyWord keyWord = existingKeyWord.get();
+            keyWord.setQuestion(reflectionQuestion);
+            keyWord.setAnswer(answer); // 답변을 answer 필드에 저장
+            keyWordRepository.save(keyWord);
+        } else {
+            // KeyWord 도큐먼트가 없으면 오류
+            log.info("유저가 존재하지 않습니다>");
+            throw new RuntimeException("Keyword 문서에 해당 유저가 존재하지 않습니다.");
+        }
+        return reportDto;
+    }
+
+
 }
