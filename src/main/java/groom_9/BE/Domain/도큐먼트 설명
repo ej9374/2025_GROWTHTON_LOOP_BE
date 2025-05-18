@@ -1,56 +1,48 @@
-// users 컬렉션
 {
-  "_id": ObjectId("user_unique_id"),
-  "nickname": "사용자 닉네임",
-  "oauthProvider": "카카오", // 또는 다른 OAuth 제공자
-  "oauthId": "카카오 사용자 ID",
-  "onboardingKeyword": ["실행력", "건강"], // 선택된 온보딩 키워드
-  "points": 150, // 현재 보유 포인트
-  "favoriteRoutines": [ObjectId("routine_id_1"), ObjectId("routine_id_2")], // 즐겨찾기 루틴 ID 목록
-  "createdAt": ISODate("2025-05-15T12:00:00Z"),
-  "updatedAt": ISODate("2025-05-15T12:30:00Z")
-}
-
-// routines 컬렉션
-{
-  "_id": ObjectId("routine_unique_id"),
-  "name": "매일 스트레칭",
-  "userId": ObjectId("user_unique_id"), // 해당 루틴을 만든 사용자 ID
-  "templateKeyword": "건강", // 추천 템플릿의 키워드 (온보딩 시 선택)
-  "createdAt": ISODate("2025-05-15T12:10:00Z"),
-  "updatedAt": ISODate("2025-05-15T12:20:00Z"),
-  "isStopped": false // 루틴 중단 여부
-}
-
-// records 컬렉션 (루틴 실천 기록)
-{
-  "_id": ObjectId("record_unique_id"),
-  "userId": ObjectId("user_unique_id"),
-  "routineId": ObjectId("routine_unique_id"),
-  "date": ISODate("2025-05-16T00:00:00Z"), // 기록 날짜
-  "status": "O" // O(성공), "△"(부분), "X"(실패)
-}
-
-// reports 컬렉션 (주간/월간 리포트)
-{
-  "_id": ObjectId("report_unique_id"),
-  "userId": ObjectId("user_unique_id"),
-  "periodStart": ISODate("2025-05-12T00:00:00Z"), // 리포트 시작 날짜 (주간/월간)
-  "periodEnd": ISODate("2025-05-18T23:59:59Z"), // 리포트 종료 날짜 (주간/월간)
-  "totalRoutines": 5,
-  "averageCompletionRate": 0.8,
-  "cumulativeSuccessCount": 28,
-  "reflection": {
-    "nextWeekRoutine": "명상 추가",
-    "proudRoutine": "매일 스트레칭"
+  "_id": {
+    "$oid": "66488c90e99123456789abcd"
   },
-  "createdAt": ISODate("2025-05-19T09:00:00Z")
-}
-
-// rewards 컬렉션 (포인트로 구매 가능한 혜택)
-{
-  "_id": ObjectId("reward_unique_id"),
-  "name": "리포트 닉네임 강조",
-  "cost": 100,
-  "description": "주간/월간 리포트에 닉네임을 강조하여 표시합니다."
+  "nickname": "Groot",
+  "kakaoId": "1234567890",
+  "imageUrl": "http://example.com/groot.jpg",
+  "points": 1000,
+  "keyword": {
+    "content": "운동",
+    "routines": [
+      {
+        "content": "매일 아침 30분 조깅",
+        "createdAt": {
+          "$date": "2025-05-18T09:00:00.000Z"
+        },
+        "successAt": {
+          "$date": "2025-05-18T09:30:00.000Z"
+        },
+        "status": "SUCCESS"
+      },
+      {
+        "content": "주 3회 헬스장 방문",
+        "createdAt": {
+          "$date": "2025-05-18T10:00:00.000Z"
+        },
+        "successAt": null,
+        "status": "IN_PROGRESS"
+      }
+    ],
+    "feedbacks": [
+      {
+        "content": "조깅 후 상쾌함을 느꼈어요!",
+        "createdAt": {
+          "$date": "2025-05-18T09:35:00.000Z"
+        }
+      },
+      {
+        "content": "이번 주 헬스 목표는 하체 운동!",
+        "createdAt": {
+          "$date": "2025-05-18T10:05:00.000Z"
+        }
+      }
+    ]
+  },
+  "age": 28,
+  "gender": "MALE"
 }

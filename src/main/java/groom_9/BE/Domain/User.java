@@ -8,7 +8,6 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
-import java.security.Key;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -21,26 +20,64 @@ public class User {
     private ObjectId id;
 
     @Field("nickname")
-    private String nickname; // 저장
+    private String nickname;
 
     @Field("kakaoId")
-    private String kakaoId; // 저장
+    private String kakaoId;
 
     @Field("imageUrl")
-    private String imageUrl; // 가져올 수 있으면 ? < 추가될까요?
+    private String imageUrl;
 
     @Field("points")
-    private Integer points; // 0으로 설정
+    private Integer points;
 
-    @Field("routines")
-    private List<ObjectId> Routines; // Null
-
-    @Field("keywords")
-    private List<ObjectId> keywords; //Null
+    @Field("keyword")
+    private EmbeddedKeyword keyword;
 
     @Field("age")
-    private int age; // MemberRequestDto 입력
+    private int age;
 
     @Field("gender")
-    private Gender gender; // MemberRequestDto
+    private Gender gender;
+
+
+    @Getter
+    @Setter
+    public static class EmbeddedKeyword {
+        @Field("content")
+        private String content; // 건강, 공부
+
+        @Field("routines")
+        private List<EmbeddedRoutine> routines;
+
+        @Field("feedbacks")
+        private List<EmbeddedFeedback> feedbacks;
+    }
+
+
+    @Getter
+    @Setter
+    public static class EmbeddedRoutine {
+        @Field("content")
+        private String content; // 하루1바퀴, 등산하기
+
+        @Field("createdAt")
+        private LocalDateTime createdAt;
+
+        @Field("successAt")
+        private LocalDateTime successAt; // 성공한 시간
+
+        @Field("status")
+        private RoutineStatus status; // 성공 여부
+    }
+
+    @Getter
+    @Setter
+    public static class EmbeddedFeedback {
+        @Field("content")
+        private String content; // 피드백 내용
+
+        @Field("createdAt")
+        private LocalDateTime createdAt;
+    }
 }
