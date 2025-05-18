@@ -8,7 +8,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Document(collection = "routine")
 @Setter
@@ -18,7 +17,7 @@ public class Routine {
     private ObjectId id;
 
     @Field("content")
-    private List<String> content; //하루1바퀴, 등산하기
+    private String content; //하루1바퀴, 등산하기
 
     @Field("userId")
     private ObjectId userId;

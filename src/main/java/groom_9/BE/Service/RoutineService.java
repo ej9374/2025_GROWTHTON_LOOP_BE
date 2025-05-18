@@ -8,7 +8,6 @@ import groom_9.BE.Domain.Routine;
 import groom_9.BE.Domain.RoutineStatus;
 import groom_9.BE.Repository.KeyWordRepository;
 import groom_9.BE.Repository.RoutineRepository;
-import groom_9.BE.Repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
@@ -27,9 +26,7 @@ import java.util.*;
 public class RoutineService {
 
     private final RoutineRepository routineRepository;
-    private final UserRepository userRepository;
     private final KeyWordRepository keyWordRepository;
-
 
     public String home(ObjectId userId) {
         List<KeyWord> byUserId = keyWordRepository.findByUserId(userId);
@@ -105,6 +102,7 @@ public class RoutineService {
 
         return calendarData;
     }
+
     public MonthlyReportDto getMonthlyReport(int thisMonth, ObjectId userId, String reflectionQuestion, String answer) {
         Month month = Month.of(thisMonth);
         int year = LocalDate.now().getYear();
@@ -150,5 +148,22 @@ public class RoutineService {
         return reportDto;
     }
 
+    public void updateRoutine(ObjectId routineId, String content) {
+        Optional<Routine> optionalRoutine = routineRepository.findById(routineId.toString());
+        if (optionalRoutine.isPresent()) {
+            Routine routine = optionalRoutine.get();
+            routine.setContent(content);
+            routineRepository.save(routine);
+        }
+        else throw new RuntimeException("해당 루틴을 찾을 수 없습니다.");
+    }
 
+    public void deleteRoutine(ObjectId routineId, ObjectId userId) {
+        Optional<Routine> routineToDelete = routineRepository.findById(routineId.toString()); // findById는 String 타입의 ID를 받습니다.
+        if (routineToDelete.isPresent()) {
+            routineRepository.deleteById(routineId.toString());
+        } else {
+            throw new RuntimeException("삭제 중 오류가 발생했습니다.");
+        }
+    }
 }

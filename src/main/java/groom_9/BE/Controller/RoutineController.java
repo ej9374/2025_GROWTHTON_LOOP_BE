@@ -2,10 +2,7 @@ package groom_9.BE.Controller;
 
 
 import groom_9.BE.Common.ApiResponse;
-import groom_9.BE.DTO.MonthlyReportDto;
-import groom_9.BE.DTO.QuestionDto;
-import groom_9.BE.DTO.RecordDto;
-import groom_9.BE.DTO.SuccessRecordDto;
+import groom_9.BE.DTO.*;
 import groom_9.BE.Service.RoutineService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -54,5 +51,31 @@ public class RoutineController {
         MonthlyReportDto reportData = routineService.getMonthlyReport(month, userId, questionDto.getReflectionQuestion(), questionDto.getAnswer());
         return ApiResponse.onSuccess(month + "월 리포트", HttpStatus.OK, reportData);
     }
+
+    @PatchMapping("/routine/edit/{routineId}")
+    public ResponseEntity<ApiResponse<String>> updateRoutine(
+            @RequestHeader ObjectId userId,
+            @PathVariable ObjectId routineId,
+            @RequestBody ContentUpdateRequestDto content
+            ){
+        log.info("컨텐트: {}", content.getContent());
+        routineService.updateRoutine(routineId, content.getContent());
+        return ApiResponse.onSuccess("수정이 완료되었습니다", HttpStatus.OK);
+    }
+
+
+    @DeleteMapping("/routine/{routineId}")
+    public ResponseEntity<ApiResponse<String>> deleteRoutine(
+            @RequestHeader ObjectId userId,
+            @PathVariable ObjectId routineId
+    ) {
+        try {
+            routineService.deleteRoutine(routineId, userId); // userId도 함께 전달하여 삭제 권한 확인 (추천)
+            return ApiResponse.onSuccess("성공입니다.", HttpStatus.OK);
+        } catch (Exception e) {
+            return ApiResponse.onFailure("삭제에 실패했습니다. :" + e ,HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 
 }
