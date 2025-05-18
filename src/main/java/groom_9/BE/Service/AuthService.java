@@ -4,23 +4,32 @@ package groom_9.BE.Service;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import groom_9.BE.DTO.MemberRequestDto;
+import groom_9.BE.DTO.UserResponseDto;
+import groom_9.BE.Domain.Gender;
+import groom_9.BE.Domain.User;
+import groom_9.BE.Repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.expression.ParseException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class AuthService {
 
+    private final UserRepository userRepository;
 
     @Value("${kakao.client_id}")
     private String clientId;
@@ -28,6 +37,7 @@ public class AuthService {
     @Value("${kakao.redirect_uri}")
     private String redirectUri;
 
+    @Transactional
     public String getAccessToken(String code){
         String accessToken = "";
         String refreshToken = "";
@@ -113,8 +123,9 @@ public class AuthService {
             JsonObject properties = (JsonObject) obj.get("properties");
 
 
-            String id = obj.get("id").toString();
-            String nickname = properties.get("nickname").toString();
+            String id = obj.get("id").getAsString();
+            String nickname = properties.get("nickname").getAsString();
+            String imageUrl = properties.get("profile_image").getAsString();
 
             String email = null;
             if (kakaoAccount.has("email") && !kakaoAccount.get("email").isJsonNull()) {
@@ -123,6 +134,7 @@ public class AuthService {
 
             result.put("id", id);
             result.put("nickname", nickname);
+            result.put("imageUrl", imageUrl);
 
             br.close();
         } catch (IOException | ParseException e) {
@@ -131,12 +143,39 @@ public class AuthService {
         return result;
     }
 
-    public void saveUser(String kakaoUserId, String nickname){
-
-        if (authRepository.isExist(kakaoUserId)){
-
+    @Transactional
+    public UserResponseDto saveUserKakao(String kakaoId, String nickname, String imageUrl){
+        log.info("saveUserKaKao 호출: kakaoId={}, nickname={}, imageUrl={}", kakaoId, nickname, imageUrl);
+        Optional<User> existingUser = userRepository.findByKakaoId(kakaoId);
+        if (existingUser.isPresent()){
+            log.info("기존 사용자 존재, DB에 저장 x");
+            return new UserResponseDto(existingUser.get().getId().toHexString(), false);
         } else {
-            authRepository.save(kakaoUserId, nickname)
+            User user = User.builder()
+                    .kakaoId(kakaoId)
+                    .nickname(nickname)
+                    .imageUrl(imageUrl)
+                    .points(0)
+                    .build();
+            userRepository.save(user);
+            log.info("유저 저장 완료: id={}", user.getId());
+            return new UserResponseDto(user.getId().toHexString(), true);
         }
+    }
+
+    @Transactional
+    public User setMemberInfo(MemberRequestDto memberRequest){
+        String userIdStr = memberRequest.getUserId();
+        ObjectId userId = new ObjectId(userIdStr);
+        Integer age = memberRequest.getAge();
+        Gender gender = memberRequest.getGender();
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
+
+        user.setAge(age);
+        user.setGender(gender);
+        userRepository.save(user);
+        return user;
     }
 }

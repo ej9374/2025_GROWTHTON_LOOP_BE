@@ -1,15 +1,19 @@
 package groom_9.BE.Controller;
 
+import groom_9.BE.Common.ApiResponse;
+import groom_9.BE.DTO.Dto;
+import groom_9.BE.DTO.MemberRequestDto;
+import groom_9.BE.DTO.UserResponseDto;
+import groom_9.BE.Domain.User;
 import groom_9.BE.Service.AuthService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Description;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
@@ -41,19 +45,30 @@ public class AuthController {
     @Description("회원이 소셜 로그인을 마치면 자동으로 실행되는 API입니다. 인가 코드를 이용해 토큰을 받고, 해당 토큰으로 사용자 정보를 조회합니다." +
             "사용자 정보를 이용하여 서비스에 회원가입합니다.")
     @GetMapping("/member/kakao")
-    public ResponseEntity<String> getKakaoUser(@RequestParam(value = "code") String code) {
+    public ResponseEntity<ApiResponse<Object>> getKakaoUser(@RequestParam(value = "code") String code) {
         log.info("인가 코드를 이용하여 토큰을 받습니다.");
         String accessToken = authService.getAccessToken(code);
         log.info("토큰에 대한 정보입니다.{}",accessToken);
         Map<String, Object> userInfo = authService.getUserInfo(accessToken);
         log.info("회원 정보 입니다.{}",userInfo);
 
-        String kakaoUserId = userInfo.get("kakaoUserId").toString();
-        String nickName = userInfo.get("nickName").toString();
+        String kakaoId = userInfo.get("id").toString();
+        String nickName = userInfo.get("nickname").toString();
+        String imageUrl = userInfo.get("imageUrl").toString();
 
-        authService.saveUser(kakaoUserId, nickName);
+        UserResponseDto userResponse = authService.saveUserKakao(kakaoId, nickName, imageUrl);
 
-
-        return ResponseEntity.ok("성공적으로 로그인 되었습니다.");
+        //isNewUser = true -> 회원가입창 isNewUser = false -> 로그인 유저가 볼 수 있는 화면
+        return ApiResponse.onSuccess("응답의 isNewUser 값이 true면 신규 회원 추가 정보 입력 창으로, false면 메인 화면으로 연결.", HttpStatus.OK, userResponse);
     }
+
+    @PostMapping("/member/info")
+    public ResponseEntity<ApiResponse<Object>> setMemberInfo(@RequestBody MemberRequestDto memberRequest){
+        log.info("입력받은 memberRequest={}",memberRequest);
+        User user = authService.setMemberInfo(memberRequest);
+
+        return ApiResponse.onSuccess("성공적으로 회원가입 되었습니다. user=", HttpStatus.OK, user);
+    }
+
+
 }

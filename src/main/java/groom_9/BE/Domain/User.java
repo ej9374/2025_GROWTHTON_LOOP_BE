@@ -21,26 +21,26 @@ public class User {
     private ObjectId id;
 
     @Field("nickname")
-    private String nickname;
+    private String nickname; // 저장
 
     @Field("kakaoId")
-    private String kakaoId;
+    private String kakaoId; // 저장
 
     @Field("imageUrl")
-    private String imageUrl;
+    private String imageUrl; // 가져올 수 있으면 ? < 추가될까요?
 
     @Field("points")
-    private Integer points;
+    private Integer points; // 0으로 설정
 
     @Field("routines")
-    private List<ObjectId> Routines;
+    private List<ObjectId> Routines; // Null
 
     @Field("keywords")
-    private List<ObjectId> keywords;
+    private List<ObjectId> keywords; //Null
 
     @Field("age")
-    private int age;
+    private int age; // MemberRequestDto 입력
 
     @Field("gender")
-    private Gender gender;
+    private Gender gender; // MemberRequestDto
 }
