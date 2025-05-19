@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import java.time.LocalDateTime;
+
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor // 기본 생성자 추가
@@ -15,7 +17,7 @@ import org.springframework.http.ResponseEntity;
 public class ApiResponse<T> {
 
     @JsonProperty("timestamp")
-    private final String timestamp = String.valueOf(System.currentTimeMillis());
+    private final String timestamp = String.valueOf(LocalDateTime.now());
 
     @JsonProperty("code")
     private String code;

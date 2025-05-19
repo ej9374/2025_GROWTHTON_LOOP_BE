@@ -5,6 +5,6 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class ContentUpdateRequestDto {
-    private String content;
+public class DeleteRoutine {
+    String routine;
 }
