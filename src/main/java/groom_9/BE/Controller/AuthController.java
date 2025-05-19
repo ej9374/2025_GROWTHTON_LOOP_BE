@@ -1,7 +1,6 @@
 package groom_9.BE.Controller;
 
 import groom_9.BE.Common.ApiResponse;
-import groom_9.BE.DTO.Dto;
 import groom_9.BE.DTO.MemberRequestDto;
 import groom_9.BE.DTO.UserDto;
 import groom_9.BE.DTO.UserResponseDto;
@@ -9,14 +8,9 @@ import groom_9.BE.Domain.User;
 import groom_9.BE.Service.AuthService;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Description;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

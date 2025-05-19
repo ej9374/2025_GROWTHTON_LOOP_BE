@@ -80,9 +80,11 @@ public class RoutineService {
 
     public void updateAllRoutinesByContent(ObjectId objectId, String oldContent, String newContent) {
         Optional<User> userOptional = userRepository.findById(objectId);
+        log.info("newContent: {}", newContent);
         userOptional.ifPresent(user -> {
             if (user.getKeyword() != null && user.getKeyword().getRoutines() != null) {
                 List<User.EmbeddedRoutine> routines = user.getKeyword().getRoutines();
+                log.info("updateAllRoutinesByContent: {}", routines.get(0).getContent() + " -> " + newContent);
                 boolean found = false;
                 for (User.EmbeddedRoutine routine : routines) {
                     if (routine.getContent().equals(oldContent)) {
