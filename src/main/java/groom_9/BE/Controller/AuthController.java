@@ -3,9 +3,11 @@ package groom_9.BE.Controller;
 import groom_9.BE.Common.ApiResponse;
 import groom_9.BE.DTO.Dto;
 import groom_9.BE.DTO.MemberRequestDto;
+import groom_9.BE.DTO.UserDto;
 import groom_9.BE.DTO.UserResponseDto;
 import groom_9.BE.Domain.User;
 import groom_9.BE.Service.AuthService;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
@@ -58,17 +60,36 @@ public class AuthController {
 
         UserResponseDto userResponse = authService.saveUserKakao(kakaoId, nickName, imageUrl);
 
-        //isNewUser = true -> 회원가입창 isNewUser = false -> 로그인 유저가 볼 수 있는 화면
-        return ApiResponse.onSuccess("응답의 isNewUser 값이 true면 신규 회원 추가 정보 입력 창으로, false면 메인 화면으로 연결.", HttpStatus.OK, userResponse);
+        return ApiResponse.onSuccess("성공입니다.", HttpStatus.OK, userResponse);
     }
 
     @PostMapping("/member/info")
     public ResponseEntity<ApiResponse<Object>> setMemberInfo(@RequestBody MemberRequestDto memberRequest){
         log.info("입력받은 memberRequest={}",memberRequest);
         User user = authService.setMemberInfo(memberRequest);
+        String id = user.getId().toHexString();
 
-        return ApiResponse.onSuccess("성공적으로 회원가입 되었습니다. user=", HttpStatus.OK, user);
+        return ApiResponse.onSuccess("성공적으로 회원가입 되었습니다. id=", HttpStatus.OK, id);
     }
 
+
+
+    // 로그인 및 마이페이지 프로필 이미지/ 닉네임/ 목표 키워드 조회
+    @GetMapping("/{userId}")
+    public ResponseEntity<ApiResponse<Object>> getUser(@PathVariable("userId") String id) {
+        log.info("입력받은 Id={}",id);
+
+        UserDto userDto = new UserDto(authService.findUserInfo(id));
+        return ApiResponse.onSuccess("성공입니다.", HttpStatus.OK, userDto);
+    }
+
+
+    // 회원탈퇴
+    @GetMapping("/delete/{userId}")
+    public ResponseEntity<ApiResponse<Object>> deleteUser(@PathVariable("userId") String id) {
+        log.info("입력받은 Id={}",id);
+        authService.deleteUser(id);
+        return ApiResponse.onSuccess("성공적으로 삭제되었습니다.", HttpStatus.OK);
+    }
 
 }

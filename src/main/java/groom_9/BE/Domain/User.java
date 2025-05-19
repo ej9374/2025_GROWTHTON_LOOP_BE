@@ -69,6 +69,9 @@ public class User {
 
         @Field("status")
         private RoutineStatus status; // 성공 여부
+
+        @Field("emoji")
+        private String emoji;
     }
 
     @Getter
