@@ -7,7 +7,10 @@ import groom_9.BE.DTO.UserDto;
 import groom_9.BE.DTO.UserResponseDto;
 import groom_9.BE.Domain.User;
 import groom_9.BE.Service.AuthService;
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -40,13 +43,8 @@ public class AuthController {
         return ApiResponse.onFailure(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
-    // 카카오 접근을 위한 인증코드 요청 과정 << 프론트엔드에서 이 창을 띄워주면 됨!
-    @Operation(
-            summary = "카카오 로그인 이동",
-            description = "",
-            responses = {
-
-            }
+    @Operation(summary = "카카오 로그인 이동 URL 생성",
+            description = "사용자가 카카오 로그인 버튼 클릭 시 이동할 인증 URL을 반환합니다."
     )
     @GetMapping("/request")
     public ResponseEntity<String> getKaKaoUri() {
@@ -58,8 +56,7 @@ public class AuthController {
     }
 
     // 전달 받은 인증 코드에 접근해 토큰 요청 후 user 확인
-    @Description("회원이 소셜 로그인을 마치면 자동으로 실행되는 API입니다. 인가 코드를 이용해 토큰을 받고, 해당 토큰으로 사용자 정보를 조회합니다." +
-            "사용자 정보를 이용하여 서비스에 회원가입합니다.")
+    @Hidden
     @GetMapping("/member/kakao")
     public ResponseEntity<ApiResponse<Object>> getKakaoUser(@RequestParam(value = "code") String code) {
         log.info("인가 코드를 이용하여 토큰을 받습니다.");
@@ -77,6 +74,9 @@ public class AuthController {
         return ApiResponse.onSuccess("성공입니다.", HttpStatus.OK, userResponse);
     }
 
+    @Operation(summary = "회원 정보 입력 및 가입 완료",
+            description = "회원 가입 시 나이, 성별 등의 정보를 입력합니다."
+    )
     @PostMapping("/member/info")
     public ResponseEntity<ApiResponse<Object>> setMemberInfo(@RequestBody MemberRequestDto memberRequest){
         log.info("입력받은 memberRequest={}",memberRequest);
@@ -86,9 +86,9 @@ public class AuthController {
         return ApiResponse.onSuccess("성공적으로 회원가입 되었습니다. id=", HttpStatus.OK, id);
     }
 
-
-
-    // 로그인 및 마이페이지 프로필 이미지/ 닉네임/ 목표 키워드 조회
+    @Operation(summary = "유저 프로필 정보 조회",
+            description = "사용자 ID로 유저의 프로필 정보(닉네임, 이미지, 키워드 등)를 조회합니다."
+    )
     @GetMapping("/{userId}")
     public ResponseEntity<ApiResponse<Object>> getUser(@PathVariable("userId") String id) {
         log.info("입력받은 Id={}",id);
@@ -97,8 +97,9 @@ public class AuthController {
         return ApiResponse.onSuccess("성공입니다.", HttpStatus.OK, userDto);
     }
 
-
-    // 회원탈퇴
+    @Operation(summary = "회원 탈퇴",
+            description = "사용자 ID로 회원 탈퇴를 진행합니다."
+    )
     @GetMapping("/delete/{userId}")
     public ResponseEntity<ApiResponse<Object>> deleteUser(@PathVariable("userId") String id) {
         log.info("입력받은 Id={}",id);
