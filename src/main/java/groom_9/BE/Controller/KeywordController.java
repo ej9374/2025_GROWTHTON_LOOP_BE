@@ -22,12 +22,15 @@ public class KeywordController {
     private final KeywordService keywordService;
     private final AuthService authService;
 
-
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ApiResponse<String>> handleIllegalArgumentException(IllegalArgumentException ex) {
+        log.error("IllegalArgumentException: {}", ex.getMessage());
+        return ApiResponse.onFailure(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
     // 유저가 keyword 선택 앤 저장
     @PostMapping("/{userId}/keyword")
     public ResponseEntity<ApiResponse<String>> setKeyword(@PathVariable("userId") String userId, @RequestParam("keyword") String keyword) {
         keywordService.setKeyword(userId, keyword);
-
         return ApiResponse.onSuccess("성공입니다. userId=", HttpStatus.OK, userId);
     }
 
@@ -36,7 +39,6 @@ public class KeywordController {
     @PostMapping("/{userId}/routines")
     public ResponseEntity<ApiResponse<String>> setRoutine(@PathVariable("userId") String userId, @RequestBody List<RoutineDto> routineDtoList) {
         keywordService.setRoutine(userId, routineDtoList);
-
         return ApiResponse.onSuccess("성공입니다. userId=", HttpStatus.OK, userId);
     }
 

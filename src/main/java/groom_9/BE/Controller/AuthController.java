@@ -7,6 +7,7 @@ import groom_9.BE.DTO.UserDto;
 import groom_9.BE.DTO.UserResponseDto;
 import groom_9.BE.Domain.User;
 import groom_9.BE.Service.AuthService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,7 +34,20 @@ public class AuthController {
     @Value("${kakao.redirect_uri}")
     private String redirectUri;
 
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ApiResponse<String>> handleIllegalArgumentException(IllegalArgumentException ex) {
+        log.error("IllegalArgumentException: {}", ex.getMessage());
+        return ApiResponse.onFailure(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
     // 카카오 접근을 위한 인증코드 요청 과정 << 프론트엔드에서 이 창을 띄워주면 됨!
+    @Operation(
+            summary = "카카오 로그인 이동",
+            description = "",
+            responses = {
+
+            }
+    )
     @GetMapping("/request")
     public ResponseEntity<String> getKaKaoUri() {
         String requestUrl = "https://kauth.kakao.com/oauth/authorize"
