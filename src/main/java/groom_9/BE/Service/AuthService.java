@@ -170,12 +170,14 @@ public class AuthService {
         ObjectId userId = new ObjectId(userIdStr);
         Integer age = memberRequest.getAge();
         Gender gender = memberRequest.getGender();
+        String name = memberRequest.getName();
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
 
         user.setAge(age);
         user.setGender(gender);
+        user.setName(name);
         userRepository.save(user);
         return user;
     }

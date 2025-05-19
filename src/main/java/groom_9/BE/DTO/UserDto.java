@@ -17,8 +17,11 @@ public class UserDto {
     @Schema(description = "사용자 ID (ObjectId의 16진수 문자열)", example = "60c72b2f9f1b2c001c8e4b9a")
     private String id;
 
-    @Schema(description = "사용자 닉네임", example = "사용자")
+    @Schema(description = "kakao 닉네임", example = "사용자")
     private String nickname;
+
+    @Schema(description = "사용자가 직접 입력한 이름(화면에 보여줘야할 이름)", example = "사용자")
+    private String name;
 
     @Schema(description = "카카오 고유 ID", example = "1234567890")
     private String kakaoId;
@@ -43,6 +46,7 @@ public class UserDto {
     public UserDto(groom_9.BE.Domain.User user) {
         this.id = user.getId() != null ? user.getId().toHexString() : null;
         this.nickname = user.getNickname();
+        this.name = user.getName();
         this.kakaoId = user.getKakaoId();
         this.imageUrl = user.getImageUrl();
         this.points = user.getPoints();

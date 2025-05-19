@@ -100,7 +100,7 @@ public class AuthController {
     @Operation(summary = "회원 탈퇴",
             description = "사용자 ID로 회원 탈퇴를 진행합니다."
     )
-    @GetMapping("/delete/{userId}")
+    @DeleteMapping("/delete/{userId}")
     public ResponseEntity<ApiResponse<Object>> deleteUser(@PathVariable("userId") String id) {
         log.info("입력받은 Id={}",id);
         authService.deleteUser(id);
