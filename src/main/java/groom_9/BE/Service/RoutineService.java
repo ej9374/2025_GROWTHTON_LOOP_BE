@@ -1,9 +1,6 @@
 package groom_9.BE.Service;
 
-import groom_9.BE.DTO.DeleteRoutine;
-import groom_9.BE.DTO.KeywordAndRoutineResponseDto;
-import groom_9.BE.DTO.SuccessRoutinesDto;
-import groom_9.BE.DTO.UserInfoResponseDto;
+import groom_9.BE.DTO.*;
 import groom_9.BE.Domain.RoutineStatus;
 import groom_9.BE.Domain.User;
 import groom_9.BE.Repository.UserRepository;
@@ -41,16 +38,17 @@ public class RoutineService {
         if (userOptional.isPresent()) {
             User user = userOptional.get();
             String keywordContent = user.getKeyword() != null ? user.getKeyword().getContent() : null;
-            List<String> routineContents = user.getKeyword() != null && user.getKeyword().getRoutines() != null
+            List<RoutineDto> routineDtos = user.getKeyword() != null && user.getKeyword().getRoutines() != null
                     ? user.getKeyword().getRoutines().stream()
-                    .map(User.EmbeddedRoutine::getContent)
+                    .map(routine -> new RoutineDto(routine.getContent(), routine.getEmoji()))
                     .collect(Collectors.toList())
                     : null;
-            return new KeywordAndRoutineResponseDto(keywordContent, routineContents);
+            return new KeywordAndRoutineResponseDto(keywordContent, routineDtos);
         } else {
             return new KeywordAndRoutineResponseDto(null, null);
         }
     }
+
 
 
     public void addRoutine(ObjectId objectId, List<String> routineList) {
