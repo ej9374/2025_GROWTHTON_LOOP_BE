@@ -14,6 +14,7 @@ public interface UserRepository extends MongoRepository<User, ObjectId> {
 //    List<User> findByNickname(String nickname);
 //    List<User> findByKeyword(String keyword);
 //    List<User> findByPointsGreaterThanEqual(Integer points);
+    Optional<User> findById(ObjectId id);
     Optional<User> findByKakaoId(String kakaoId);
 //    // save(), findById(), deleteById(), findAll() 등의 기본 메소드는 MongoRepository에 이미 정의되어 있습니다.
 }

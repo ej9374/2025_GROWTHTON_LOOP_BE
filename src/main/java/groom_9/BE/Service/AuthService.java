@@ -5,6 +5,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import groom_9.BE.DTO.MemberRequestDto;
+import groom_9.BE.DTO.UserDto;
 import groom_9.BE.DTO.UserResponseDto;
 import groom_9.BE.Domain.Gender;
 import groom_9.BE.Domain.User;
@@ -169,13 +170,30 @@ public class AuthService {
         ObjectId userId = new ObjectId(userIdStr);
         Integer age = memberRequest.getAge();
         Gender gender = memberRequest.getGender();
+        String name = memberRequest.getName();
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
 
         user.setAge(age);
         user.setGender(gender);
+        user.setName(name);
         userRepository.save(user);
         return user;
+    }
+
+    @Transactional
+    public User findUserInfo(String userId){
+        ObjectId id = new ObjectId(userId);
+
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
+
+        return user;
+    }
+
+    public void deleteUser(String userId){
+        ObjectId id = new ObjectId(userId);
+        userRepository.deleteById(id);
     }
 }

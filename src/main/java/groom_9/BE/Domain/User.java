@@ -3,6 +3,7 @@ package groom_9.BE.Domain;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.FieldNameConstants;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -21,6 +22,9 @@ public class User {
 
     @Field("nickname")
     private String nickname;
+
+    @Field("name")
+    private String name;
 
     @Field("kakaoId")
     private String kakaoId;
@@ -69,6 +73,9 @@ public class User {
 
         @Field("status")
         private RoutineStatus status; // 성공 여부
+
+        @Field("emoji")
+        private String emoji;
     }
 
     @Getter

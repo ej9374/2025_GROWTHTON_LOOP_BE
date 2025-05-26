@@ -1,0 +1,615 @@
+---
+openapi: 3.0.1
+info:
+  title: API - 성장톤
+  description: API Description
+  version: v1.0.0
+servers:
+  - url: http://localhost:8080
+    description: Generated server url
+paths:
+  "/routines":
+    post:
+      tags:
+        - routine-controller
+      summary: 루틴 추가
+      description: 새로운 루틴 리스트를 받아 사용자에게 추가합니다.
+      operationId: addRoutines
+      parameters:
+        - name: userId
+          in: query
+          required: true
+          schema:
+            "$ref": "#/components/schemas/ObjectId"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/NewRoutineListDto"
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            "*/*":
+              schema:
+                "$ref": "#/components/schemas/ApiResponseString"
+    delete:
+      tags:
+        - routine-controller
+      summary: 루틴 삭제
+      description: 사용자의 루틴 중 하나를 삭제합니다. 존재하지 않으면 실패 응답을 반환합니다.
+      operationId: deleteRoutines
+      parameters:
+        - name: userId
+          in: query
+          required: true
+          schema:
+            "$ref": "#/components/schemas/ObjectId"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/DeleteRoutine"
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            "*/*":
+              schema:
+                "$ref": "#/components/schemas/ApiResponseString"
+    patch:
+      tags:
+        - routine-controller
+      summary: 루틴 수정
+      description: 기존 루틴 이름을 기준으로 새로운 이름으로 업데이트합니다.
+      operationId: updateRoutines
+      parameters:
+        - name: userId
+          in: query
+          required: true
+          schema:
+            "$ref": "#/components/schemas/ObjectId"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/UpdateRoutine"
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            "*/*":
+              schema:
+                "$ref": "#/components/schemas/ApiResponseString"
+  "/retrospect":
+    post:
+      tags:
+        - routine-controller
+      summary: 회고 피드백 저장
+      description: 사용자가 입력한 회고 답변을 MongoDB에 저장합니다.
+      operationId: retrospect
+      parameters:
+        - name: userId
+          in: query
+          required: true
+          schema:
+            "$ref": "#/components/schemas/ObjectId"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/FeedbackAnswerDto"
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            "*/*":
+              schema:
+                "$ref": "#/components/schemas/ApiResponseString"
+  "/home":
+    get:
+      tags:
+        - routine-controller
+      summary: 홈 화면 루틴 조회
+      description: 현재 사용자의 키워드와 해당 키워드에 따른 루틴 리스트를 반환합니다.
+      operationId: home
+      parameters:
+        - name: userId
+          in: query
+          required: true
+          schema:
+            "$ref": "#/components/schemas/ObjectId"
+      responses:
+        '200':
+          description: OK
+          content:
+            "*/*":
+              schema:
+                "$ref": "#/components/schemas/ApiResponseKeywordAndRoutineResponseDto"
+    post:
+      tags:
+        - routine-controller
+      summary: 루틴 성공 처리
+      description: 사용자가 수행한 루틴 목록을 전달받아 상태를 성공으로 업데이트합니다.
+      operationId: homePost
+      parameters:
+        - name: userId
+          in: query
+          required: true
+          schema:
+            "$ref": "#/components/schemas/ObjectId"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/SuccessRoutinesDto"
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            "*/*":
+              schema:
+                "$ref": "#/components/schemas/ApiResponseString"
+  "/api/{userId}/routines":
+    post:
+      tags:
+        - keyword-controller
+      summary: 키워드에 따른 루틴 추천 및 저장
+      description: 키워드에 따른 루틴 리스트를 받아 사용자에 저장합니다.
+      operationId: setRoutine
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                "$ref": "#/components/schemas/RoutineDto"
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            "*/*":
+              schema:
+                "$ref": "#/components/schemas/ApiResponseString"
+  "/api/{userId}/keyword":
+    post:
+      tags:
+        - keyword-controller
+      summary: 사용자 키워드 선택 및 저장
+      description: 사용자가 선택한 키워드를 저장합니다. userId와 키워드 문자를 전달해야 합니다.
+      operationId: setKeyword
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: keyword
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            "*/*":
+              schema:
+                "$ref": "#/components/schemas/ApiResponseString"
+  "/api/member/info":
+    post:
+      tags:
+        - auth-controller
+      summary: 회원 정보 입력 및 가입 완료
+      description: 회원 가입 시 나이, 성별 등의 정보를 입력합니다.
+      operationId: setMemberInfo
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/MemberRequestDto"
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            "*/*":
+              schema:
+                "$ref": "#/components/schemas/ApiResponseObject"
+  "/user":
+    get:
+      tags:
+        - routine-controller
+      summary: 유저 정보 조회
+      description: ObjectId로 사용자의 기본 정보(이름, 키워드 등)를 조회합니다.
+      operationId: getUser
+      parameters:
+        - name: userId
+          in: query
+          required: true
+          schema:
+            "$ref": "#/components/schemas/ObjectId"
+      responses:
+        '200':
+          description: OK
+          content:
+            "*/*":
+              schema:
+                "$ref": "#/components/schemas/ApiResponseOptionalUserInfoResponseDto"
+  "/success":
+    get:
+      tags:
+        - controller
+      operationId: success
+      responses:
+        '200':
+          description: OK
+          content:
+            "*/*":
+              schema:
+                "$ref": "#/components/schemas/ApiResponseObject"
+  "/success2":
+    get:
+      tags:
+        - controller
+      operationId: success2
+      responses:
+        '200':
+          description: OK
+          content:
+            "*/*":
+              schema:
+                "$ref": "#/components/schemas/ApiResponseDto"
+  "/report":
+    get:
+      tags:
+        - routine-controller
+      summary: 루틴별 성공률 리포트 조회
+      description: 각 루틴에 대한 사용자의 성공률을 계산해 리포트 형식으로 반환합니다.
+      operationId: report
+      parameters:
+        - name: userId
+          in: query
+          required: true
+          schema:
+            "$ref": "#/components/schemas/ObjectId"
+      responses:
+        '200':
+          description: OK
+          content:
+            "*/*":
+              schema:
+                "$ref": "#/components/schemas/ApiResponseMapStringDouble"
+  "/fail":
+    get:
+      tags:
+        - controller
+      operationId: fail
+      responses:
+        '200':
+          description: OK
+          content:
+            "*/*":
+              schema:
+                "$ref": "#/components/schemas/ApiResponseObject"
+  "/api/{userId}":
+    get:
+      tags:
+        - auth-controller
+      summary: 유저 프로필 정보 조회
+      description: 사용자 ID로 유저의 프로필 정보(닉네임, 이미지, 키워드 등)를 조회합니다.
+      operationId: getUser_1
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            "*/*":
+              schema:
+                "$ref": "#/components/schemas/ApiResponseObject"
+  "/api/request":
+    get:
+      tags:
+        - auth-controller
+      summary: 카카오 로그인 이동 URL 생성
+      description: 사용자가 카카오 로그인 버튼 클릭 시 이동할 인증 URL을 반환합니다.
+      operationId: getKaKaoUri
+      responses:
+        '200':
+          description: OK
+          content:
+            "*/*":
+              schema:
+                type: string
+  "/api/delete/{userId}":
+    delete:
+      tags:
+        - auth-controller
+      summary: 회원 탈퇴
+      description: 사용자 ID로 회원 탈퇴를 진행합니다.
+      operationId: deleteUser
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            "*/*":
+              schema:
+                "$ref": "#/components/schemas/ApiResponseObject"
+components:
+  schemas:
+    ObjectId:
+      type: object
+      properties:
+        timestamp:
+          type: integer
+          format: int32
+        date:
+          type: string
+          format: date-time
+    NewRoutineListDto:
+      type: object
+      properties:
+        routineList:
+          type: array
+          description: 추가할 루틴들의 이름 리스트
+          example:
+            - 아침 스트레칭
+            - 명상 10분
+          items:
+            type: string
+            description: 추가할 루틴들의 이름 리스트
+            example: '["아침 스트레칭","명상 10분"]'
+    ApiResponseString:
+      type: object
+      properties:
+        timestamp:
+          type: string
+        code:
+          type: string
+        message:
+          type: string
+        result:
+          type: string
+    FeedbackAnswerDto:
+      type: object
+      properties:
+        answer:
+          type: array
+          description: 사용자가 입력한 회고 답변 리스트
+          example:
+            - 오늘 루틴을 모두 완료해서 뿌듯했어요
+            - 물 마시는 루틴은 아직 어렵네요
+          items:
+            type: string
+            description: 사용자가 입력한 회고 답변 리스트
+            example: '["오늘 루틴을 모두 완료해서 뿌듯했어요","물 마시는 루틴은 아직 어렵네요"]'
+    SuccessRoutinesDto:
+      type: object
+      properties:
+        routines:
+          type: array
+          description: 성공한 루틴 이름 목록
+          example:
+            - 하루 1바퀴 걷기
+            - 물 2L 마시기
+          items:
+            type: string
+            description: 성공한 루틴 이름 목록
+            example: '["하루 1바퀴 걷기","물 2L 마시기"]'
+    RoutineDto:
+      type: object
+      properties:
+        content:
+          type: string
+          description: 루틴 내용
+          example: 하루 1바퀴 걷기
+        emoji:
+          type: string
+          description: 루틴과 연관된 이모지
+          example: "\U0001F6B6‍♂️"
+    MemberRequestDto:
+      type: object
+      properties:
+        userId:
+          type: string
+          description: 사용자 ID (ObjectId의 16진수 문자열)
+          example: 60c72b2f9f1b2c001c8e4b9a
+        name:
+          type: string
+          description: 사용자 네임
+          example: 사용자
+        age:
+          type: integer
+          description: 사용자 나이
+          format: int32
+          example: 30
+        gender:
+          type: string
+          description: 성별 (MALE, FEMALE 등)
+          example: MALE
+          enum:
+            - MALE
+            - FEMALE
+    ApiResponseObject:
+      type: object
+      properties:
+        timestamp:
+          type: string
+        code:
+          type: string
+        message:
+          type: string
+        result:
+          type: object
+    UpdateRoutine:
+      type: object
+      properties:
+        newRoutine:
+          type: string
+        oldRoutine:
+          type: string
+    ApiResponseOptionalUserInfoResponseDto:
+      type: object
+      properties:
+        timestamp:
+          type: string
+        code:
+          type: string
+        message:
+          type: string
+        result:
+          "$ref": "#/components/schemas/UserInfoResponseDto"
+    EmbeddedFeedback:
+      type: object
+      properties:
+        content:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+    EmbeddedKeyword:
+      type: object
+      properties:
+        content:
+          type: string
+        routines:
+          type: array
+          items:
+            "$ref": "#/components/schemas/EmbeddedRoutine"
+        feedbacks:
+          type: array
+          items:
+            "$ref": "#/components/schemas/EmbeddedFeedback"
+    EmbeddedRoutine:
+      type: object
+      properties:
+        content:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        successAt:
+          type: string
+          format: date-time
+        status:
+          type: string
+          enum:
+            - SUCCESS
+            - FAIL
+        emoji:
+          type: string
+    UserInfoResponseDto:
+      type: object
+      properties:
+        id:
+          "$ref": "#/components/schemas/ObjectId"
+        nickname:
+          type: string
+        kakaoId:
+          type: string
+        imageUrl:
+          type: string
+        points:
+          type: integer
+          format: int32
+        keyword:
+          "$ref": "#/components/schemas/EmbeddedKeyword"
+        age:
+          type: integer
+          format: int32
+        gender:
+          type: string
+          enum:
+            - MALE
+            - FEMALE
+    ApiResponseDto:
+      type: object
+      properties:
+        timestamp:
+          type: string
+        code:
+          type: string
+        message:
+          type: string
+        result:
+          "$ref": "#/components/schemas/Dto"
+    Dto:
+      type: object
+      properties:
+        name:
+          type: string
+        id:
+          type: integer
+          format: int32
+    ApiResponseMapStringDouble:
+      type: object
+      properties:
+        timestamp:
+          type: string
+        code:
+          type: string
+        message:
+          type: string
+        result:
+          type: object
+          additionalProperties:
+            type: number
+            format: double
+    ApiResponseKeywordAndRoutineResponseDto:
+      type: object
+      properties:
+        timestamp:
+          type: string
+        code:
+          type: string
+        message:
+          type: string
+        result:
+          "$ref": "#/components/schemas/KeywordAndRoutineResponseDto"
+    KeywordAndRoutineResponseDto:
+      type: object
+      properties:
+        keywordContent:
+          type: string
+          description: 사용자가 선택한 키워드
+          example: 운동
+        routines:
+          type: array
+          description: 해당 키워드에 기반한 추천 루틴 목록
+          example:
+            - 하루 1바퀴 걷기
+            - 스트레칭 10분
+          items:
+            type: string
+            description: 해당 키워드에 기반한 추천 루틴 목록
+            example: '["하루 1바퀴 걷기","스트레칭 10분"]'
+    DeleteRoutine:
+      type: object
+      properties:
+        routine:
+          type: string
+          description: 삭제할 루틴 이름
+          example: 아침 스트레칭
