@@ -1,3 +1,5 @@
+<img width="800" height="500" alt="Image" src="https://github.com/user-attachments/assets/a1293389-9194-41b2-90ff-82e35939c59c" />
+
 # 🏠 루프
 ## 기획배경 및 설명
 
